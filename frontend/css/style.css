@@ -1,0 +1,58 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap");
+
+body {
+    font-family: "Poppins", sans-serif;
+}
+
+/* Custom styles for gradients and shadows not easily done with Tailwind */
+.bg-gradient-to-br {
+    background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
+}
+
+.from-indigo-500 {
+    --tw-gradient-from: #6366f1;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(99, 102, 241, 0));
+}
+
+.to-purple-600 {
+    --tw-gradient-to: #9333ea;
+}
+
+.bg-clip-text {
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.text-transparent {
+    color: transparent;
+}
+
+.bg-gradient-to-r {
+    background-image: linear-gradient(to right, var(--tw-gradient-stops));
+}
+
+.from-indigo-600 {
+    --tw-gradient-from: #4f46e5;
+    --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(79, 70, 229, 0));
+}
+
+.to-purple-700 {
+    --tw-gradient-to: #7e22ce;
+}
+
+.notification-toast {
+    animation: slideIn 0.5s forwards;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+

@@ -1,0 +1,143 @@
+# DailyHealthy - Configuração Apache (.htaccess)
+# Arquivo de configuração para XAMPP
+
+# Habilitar rewrite engine
+RewriteEngine On
+
+# Definir diretório base (MUITO IMPORTANTE para subdiretórios como /dailyhealthy/)
+# Se o aplicativo estiver em http://localhost/dailyhealthy/, use:
+RewriteBase /dailyhealthy/
+
+# ===== HEADERS DE SEGURANÇA E CORS =====
+
+<IfModule mod_headers.c>
+    # CORS para AJAX (Permitir requisições de qualquer origem)
+    Header always set Access-Control-Allow-Origin "*"
+    Header always set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+    
+    # Segurança
+    Header always set X-Content-Type-Options nosniff
+    Header always set X-Frame-Options DENY
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    
+    # Cache Control
+    Header unset ETag
+</IfModule>
+
+# ===== URLS AMIGÁVEIS =====
+
+# 1. Não reescrever se o arquivo ou diretório existir no sistema de arquivos
+# Isso permite que arquivos estáticos (CSS, JS, imagens) sejam servidos diretamente
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# 2. Redirecionar todas as outras requisições para index.php (o roteador central)
+RewriteRule ^(.*)$ index.php [L]
+
+# ===== COMPRESSÃO GZIP =====
+
+<IfModule mod_deflate.c>
+    # Comprimir tipos de arquivo
+    AddOutputFilterByType DEFLATE text/plain
+    AddOutputFilterByType DEFLATE text/html
+    AddOutputFilterByType DEFLATE text/xml
+    AddOutputFilterByType DEFLATE text/css
+    AddOutputFilterByType DEFLATE text/javascript
+    AddOutputFilterByType DEFLATE application/xml
+    AddOutputFilterByType DEFLATE application/xhtml+xml
+    AddOutputFilterByType DEFLATE application/rss+xml
+    AddOutputFilterByType DEFLATE application/javascript
+    AddOutputFilterByType DEFLATE application/x-javascript
+    AddOutputFilterByType DEFLATE application/json
+    
+    # Não comprimir imagens (já são comprimidas)
+    SetEnvIfNoCase Request_URI \
+        \.(?:gif|jpe?g|png|ico)$ no-gzip dont-vary
+    SetEnvIfNoCase Request_URI \
+        \.(?:exe|t?gz|zip|bz2|sit|rar)$ no-gzip dont-vary
+</IfModule>
+
+# ===== CACHE DE ARQUIVOS ESTÁTICOS =====
+
+<IfModule mod_expires.c>
+    ExpiresActive On
+    
+    # Imagens
+    ExpiresByType image/jpg "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/gif "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/ico "access plus 1 month"
+    ExpiresByType image/x-icon "access plus 1 month"
+    ExpiresByType image/svg+xml "access plus 1 month"
+    
+    # CSS e JavaScript
+    ExpiresByType text/css "access plus 1 week"
+    ExpiresByType text/javascript "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+    ExpiresByType application/x-javascript "access plus 1 week"
+    
+    # Fontes
+    ExpiresByType font/woff "access plus 1 month"
+    ExpiresByType font/woff2 "access plus 1 month"
+    ExpiresByType application/font-woff "access plus 1 month"
+    ExpiresByType application/font-woff2 "access plus 1 month"
+    
+    # Outros arquivos
+    ExpiresByType application/pdf "access plus 1 month"
+    ExpiresByType text/plain "access plus 1 week"
+    
+    # HTML (cache curto para páginas dinâmicas)
+    ExpiresByType text/html "access plus 1 hour"
+</IfModule>
+
+# ===== CONFIGURAÇÕES PHP =====
+
+# Aumentar limite de upload (se necessário)
+php_value upload_max_filesize 10M
+php_value post_max_size 10M
+php_value max_execution_time 300
+php_value max_input_time 300
+
+# Configurações de sessão
+php_value session.cookie_httponly 1
+php_value session.cookie_secure 0
+php_value session.use_only_cookies 1
+
+# Configurações de segurança
+php_flag display_errors Off
+php_flag log_errors On
+php_value error_log logs/error.log
+
+# ===== CONFIGURAÇÕES MIME =====
+
+<IfModule mod_mime.c>
+    # Adicionar tipos MIME se necessário
+    AddType application/javascript .js
+    AddType text/css .css
+    AddType image/svg+xml .svg
+    AddType application/font-woff .woff
+    AddType application/font-woff2 .woff2
+</IfModule>
+
+# ===== CONFIGURAÇÕES DE CHARSET =====
+
+AddDefaultCharset UTF-8
+DefaultLanguage pt-BR
+
+# ===== OTIMIZAÇÕES =====
+
+# Remover ETags (para melhor cache)
+<IfModule mod_headers.c>
+    Header unset ETag
+</IfModule>
+FileETag None
+
+# Configurar Keep-Alive
+<IfModule mod_headers.c>
+    Header set Connection keep-alive
+</IfModule>
+

@@ -1,0 +1,21 @@
+RewriteEngine On
+RewriteBase /dailyhealthy/public/
+
+# Força URLs em lowercase
+RewriteMap lc int:tolower
+RewriteCond %{REQUEST_URI} [A-Z]
+RewriteRule (.*) ${lc:$1} [R=301,L]
+
+# Se o arquivo/diretório não existe, redireciona para index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Protege arquivos sensíveis
+<FilesMatch "^\.">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Protege diretórios sensíveis
+RedirectMatch 403 ^/DailyHealthy/(app|config|migrations)/.*$

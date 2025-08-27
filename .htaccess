@@ -1,0 +1,17 @@
+Options -Indexes
+
+# Redireciona para public se acessar a raiz
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_URI} ^/dailyhealthy/?$
+    RewriteRule ^(.*)$ /dailyhealthy/public/ [L,R=301]
+    
+    # Protege diretórios sensíveis
+    RewriteRule ^(app|config|migrations)/ - [F,L]
+</IfModule>
+
+# Nega acesso a arquivos sensíveis
+<FilesMatch "^(.htaccess|.env|composer.json|composer.lock)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
